@@ -1,0 +1,4 @@
+Github.io page is hosted at https://wisdomaudio.github.io/
+Version info page is https://wisdomaudio.github.io/ampversion.json
+
+Github repository: https://github.com/WisdomAudio/WisdomAudio.github.io
