@@ -11,6 +11,8 @@ In Wizard.HTML, change the date (data) for WizardVersion :
     var WizardVersion = "2024-11-24"; // 
 
 **post the new firmware to the Wisdom Page for download first - otherewise people will get an alert without being able to download.
+Before Updating the release data on the web hosted .json file, the alert will pop on new firmware. 
+I use this to check, and then update (step2 below) and then relaod to check that the alert goes away as it should.
 
 2. 
 in the ampversion.json, change the version to match the above and push to Git. Git updates in a few minutes and then the alert will become active if the amp is able to connect to the internet.
