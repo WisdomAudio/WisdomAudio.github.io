@@ -1,0 +1,961 @@
+
+SA-xDSP - (includes all models) Revision History-->
+SA8 is noted here but this covers all models, where features are appropriate. Not all models have all features.
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+Known Bugs (new gen hardware specific):
+> Some systems come up too fast and the Router will assign a new IP address after reload, as the old one is still being held in use.
+> Firmware Update from firmware prior to Rev-xx-xx-46_WebUI-16, or from any previous version to Rev xx-xx-72 or higher, loads but does not reboot correctly sometimes. Requires a Manual Power off from the rear panel to complete normally.
+> In the Speakers-->Advanced Controls-->Crossover: Changing the Crossover Order or Type does not recalculate the available PEQ for the channel. It is possible to have PEQ in the speaker preset that is not active as the maximum DSP has been exceeded. This is a very advanced feature so be careful!
+> When test tone is on and the amp is placed in standby, if the network power save is OFF then on power on the webpage does not update to reflect the reset test tones and enabled speakers. Page must be manually reloaded.
+
+Coming Soon:
+> Added 1st order hi low filter into Channel User EQ for fine adjustment of rolloff and phase during calibration
+> Add ping/pong from webpage (client) to close if amplifier (server) is powered off or not responding within a short time, instead of waiting for Router to update open hosts or become stale.
+
+> User stored snapshot ("PRESETS") to store and recall Channels and Speakers configuration in real time.
+> DANTE network IP and Hardware config information displayed on NETWORK tab, with the ability to reset to DHCP.
+> Firmware Update shows files being unpacked on amplifier (server) after upload from computer (client).
+
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+Release date 2026-08-xx
+SA8DSP_Rev-xx-xx-74_WebUI-41
+
+Changes/Enhancements:
+> PRESETS are now active. Up to 4 stored snapshots can be stored, plus the "baseline" config can be toggled.
+> PRESETS store all current Channels and Speakers settings. PRESETS do not store or recall any other data.
+> DANTE now shows installed Dante hardware IP status. 
+> DANTE network settings can be reset to DHCP from WebUI, if set to STATIC IP.
+> Added P3m Profile
+> Removed Legacy non-FIR speaker profiles
+> WebUI shows File expansion during firmware updates of WebUI files
+> If Presets are updated, all open HTML Clients (web pages) are updated at the same time.
+
+
+Bug Fixes:
+> WebUI no longer sends all channels when adding or removing an input for a specific channel. Only the specific channel data is sent.
+> Suppress writing of Configuration Data to the file system during import until complete. This significantly speeds up the import process as all changes are "saved to disk" as a bulk save, instead of each individual change.
+
+----------------------------------------------------------------------------------
+Release date 2026-07-24
+SA8DSP_Rev-xx-xx-73_WebUI-40
+
+Changes/Enhancements:
+> Added ICS3FR speaker profile
+> Added SUB2 speaker profile
+
+
+Bug Fixes:
+> Moved the DSP Initialization later in the turn on steps to avoid programming the chip too soon and causing a DSP re-init for no good reason!
+> Removed DSP Hardware Chip Core Status check from the turn on programming routine, as the status flag of the hardware may not be available during download of the DSP program. This begins automatically once powered on.
+> On SA8DSP and IA8DSP built after August 2025 - Corrects the DSP Status Monitoring and Recover logic that would recover from DSP faults and Clock failures, but could leave the output muted. DSP would recover audio but amplifier would remain muted.
+> For SA2DSP and SA3DSP only (WebUI JS code) - removed option for Mains Power On so only "turn on" is available. This is a hardware limitation and is not visible to end users but is set this way as a precaution.
+
+----------------------------------------------------------------------------------
+Release date 2026-06-03
+SA8DSP_Rev-02-72_WebUI-39
+
+Changes/Enhancements:
+> Updated File System for future use with PRESETS store/recall
+> Moved FIR filter read/write from WebServer to internal File System for much faster FIR Speaker Profile setup. Removed this from the WebUI (no longer needed)
+> Improves I2C bus recovery during bootup, to avoid stuck state.
+> added Log message details for better troubleshooting
+> initial File System updates for future expansion to include Snapshot presets recall
+> Factory Default is now for "POWER ON" from initial power, to ensure the Network properly sets up and responds after a power failure.
+> Removed "Factory Reset" from Telnet menu
+> Telnet server is now tested and approved for use with external controllers such as Crestron.
+
+
+Bug Fixes:
+> Dante Enable reset on reboot and dsp re-init, was possible for the DSP clock line to be pulled low and not boot without a hard power cycle. This could cause "no audio" without hard power cycle.
+> Simplifies Front Panel LED board Initialization to avoid incorrectly initializing the wrong device address, which makes the LED not responsive, specifically on SW-1DSP hardware.
+> improved I2C bus recovery and stuck detection
+> http server: fix an infinite loop in the http stack ( HTTP_TRANSMIT_BLOCK_SIZE);
+
+
+
+
+----------------------------------------------------------------------------------
+
+Release date 2026-03-06
+SA8DSP_Rev-02-71_WebUI-38
+
+Changes/Enhancements:
+> Filters for User EQ so that parameters are maintained across reboots when BYPASS is true.
+> High Shelf and Low Shelf User EQ passes Q (RBJ method) to the DSP. What is graphed now matches what is in DSP. Prior version used a fixed Q of 1.
+> External Control Protocol (cpc) API - Telnet commands for external user testing
+> Clean up of System Reboot / Power on / Power Save code (no functional changes)
+> Add Wizard.HTML overlay during file import so that end user is aware of system busy during import
+> track power state and send state to connected Clients so that the UI can display On/Off/Bootup state
+> Added Power On and Power Off buttons with feedback into UI to mirror external control protocol 
+> Improved error reporting in Telnet for use with external control protocol (3rd party remote control)
+> added candy stripe pole animation during File System firmware update decompression.
+> Updated the SW1 LED "front panel blink" command for a simpler pattern to better emulate the SA-8 front panel.
+> Added Network Power Save option to in Network - for backward compatibility only, should always be checked be default.
+
+Bug Fixes:
+> On webpage reload,  Rehydrate FIR Data into live JCO memory for further processing on Speaker Driver by end users (NO DSP WRITE)
+> Changed initial Network Power Save defaults to OFF for SA2/SA3/SW1/IA8
+> Fix Time Zone Offset , so that the time zone offset is now remembered after power cycle and used for any log entries
+> Fix FIR data send from Wizard.HTML , was sending twice during Speaker Configuration, now only sends once.
+> fixed Firmware Update UI to keep visible during multi-file updates when the ABORT button is pressed in during the first file.
+
+
+----------------------------------------------------------------------------------
+
+Release date 2026-02-01
+SA8DSP_Rev-02-70_WebUI-37
+
+Changes/Enhancements:
+> Enabled VU meters on Wizard page with page tracking to enable/disable only when needed. This reduces overhead on the server.
+> Improved Dante card name display through the HTML page.
+> pauses DSP reads and Log Write during DSP Write, especially on long configuration import. Avoids incorrectly missed data import, and speeds up import process.
+> Track whether we have asked the server to stream VU data for this client, and only sends VU data when on the Channels page.
+> Interim check in of volume control Telnet commands.
+
+
+Bug Fixes:
+> reverted to earlier version to correct failsafe HTML from not loading.
+----------------------------------------------------------------------------------
+
+
+Release date 2026-01-13
+SA8DSP_Rev-02-69_WebUI-36
+
+Changes/Enhancements:
+> speed up network read/write : burst SPI for W5500 NIC between 
+> Simplify Failsafe.html to remove Glyphicons and replace with Unicode , also reduces firmware file size.
+> Simplified pause DSP and Dante hardware monitoring during  write of imported CFG. Resume monitoring 30 seconds after import.
+
+
+Bug Fixes:
+> none
+----------------------------------------------------------------------------------
+
+
+Release date 2025-12-23
+SA8DSP_Rev-02-68_WebUI-35
+
+Changes/Enhancements:
+> Change Reset timeout on internal I2C bus from 20s to 3s to avoid stuck state.
+> Turn off hardware watchdog to avoid nuisance reboots from long DSP writes.
+
+Bug Fixes:
+> none
+----------------------------------------------------------------------------------
+
+Release date 2025-12-20
+SA8DSP_Rev-02-67_WebUI-35
+
+Changes/Enhancements:
+> Network hardware: Enable W5500 MACRAW hardware filtering (MFEN + IPv6 block + multicast block) to ignore multicast/IPv6 noise and improve responsiveness on high-traffic networks. 
+> TEMP: REMOVE VU METER FROM CHANNELS - WILL BE IN FUTURE RELEASE - to improve responsiveness on high traffic networks.
+> Redirect/Reload of webpage after a Hostname change will now use the IP Address first if valid, and the Hostname as a fall back, to prevent no connection when Routers do not properly resolve Hostname to IP address.
+> Redirect after firmware update should automatically clear the cache and load new files.
+> Switched to Unicode Icons for better cross platform rendering.
+
+Bug Fixes:
+> fixes potential loss of data on large file config import , such as 8 channel data with FIR by pausing large read/write from DSP and EE Log write, during config transfer.
+
+----------------------------------------------------------------------------------
+
+Release date 2025-12-15
+SA8DSP_Rev-02-66_WebUI-34
+
+Changes/Enhancements:
+> Added P2m and P4m Gen2 FIR profile filter correction (phase linear).
+> Added ICS7a 2026 model profile (Gen2).
+> Added ICI6 FIR filter phase correction.
+> updated UI elements to use Unicode icons for cross platform portability and smaller file size requirements.
+> Removed Glyphicons from font download requirements.
+
+Bug Fixes:
+> removed "activeClient" tracking for UI updates to avoid possible processor lag and crash.
+> no longer sends FIR data on webpage reload, except during a File Import.
+
+----------------------------------------------------------------------------------
+
+Release date 2025-12-09
+SA8DSP_Rev-02-65_WebUI-33
+INTERNAL ONLY -- not on Web
+
+Changes/Enhancements:
+
+> wizard.html: Detailed firmware update failure text from WebUI, and from Server reported failures.
+> wizard.js: improved reboot on update pop up box control/clearing; improved cache clearing after reboot; improved firmware calculations size before upload.
+> add better logging and display of power supply status during power on.
+
+
+Bug Fixes:
+> Add watchdog reboot marker and track reboot reason register; and clear sticky registers on read; Add logging of reboot reason (0=normal, 1=software reboot, 2=watchdog) for troubleshooting.
+> TelnetServer.cpp: added "watchdogtest" and cleaned up duplicate power on and off commands.
+> Web Server Interface: added firmware upload diagnostics, and guard against obvious error cases.
+> WriteFirmwareData: fix the "failed during upload while loading chunks; reclaim cached firmware space; fix fsWorking address; reclaim Image FS space and clear when done with upload.
+> Gen2 IcePower 400W amp module: Fix special LED blink for all channels disabled;
+
+
+
+----------------------------------------------------------------------------------
+Release date 2025-11-10
+SA8DSP_Rev-02-64_WebUI-32
+
+>released package for SA8DSP/IA8DSP
+
+Changes/Enhancements:
+> Analog input now routed to Dante Transmit, when Dante is set to 96k (requires Dante Firmware Update through the Dante Controller, Wisdom Amp v2.0.0.0) - Contact Wisdom for the correct DANTE firmware
+> Begin_the_Dante _clock_and_sample_rate_polling- Digital clock will now be bit locked accurate to Dante Network devices if the Dante card is set to 96k and the network sync is valid, system automatically selects the clock.
+> Updated the Firmware Failsafe page for fallback if webpages become corrupted. Simplify and Streamline the UI. The page is available at http://[ip address or hostname]/failsafe/index.html
+> Firmware update is now a single file update. The file will load the FileSystem (front end) and Firmware (backend) in a single upload.
+
+Bug Fixes:
+> fixed file import dialogue box to properly load config file. Fixes bug that would not import any data.
+> Improved tracking of Network Clients for multiple users or pages on one device (ClientNum maximum connection is 5) for better housekeeping of active clients
+> WebUI will use port 81 and not port 443 when possible. Port 443 is reserved for Secure Layer (https or wss, vs http or ws). We do not support Secure Socket Layer or TLS.
+
+----------------------------------------------------------------------------------
+Release date 2025-10-15
+SA8DSP_Rev-02-63_WebUI-31
+
+> Release to support Non-DSP with new IcePower Module. No DSP functions
+ 
+
+----------------------------------------------------------------------------
+Release date 2025-9-21
+SA8DSP_Rev-02-62_WebUI-30
+
+Changes/Enhancements:
+> Input Level Meters on Channels page, now show input level to the channels
+> Added a turn off wait / soft shutdown of power supply for SA8/IA8 with new gen power supply. Front panel shows countdown.
+> Added error message specific for DSP programming failure on startup
+
+Bug Fixes:
+> Fix for watchdog reset when updating Dante firmware.
+> Increase the total task count allowed in the MCU.
+> Fix logic for detecting failed ADC Initialization failure during startup programming.
+> Add verification of ADC clock control values during startup programming.
+> Added Amp_Board_Enable timing in power on logic specific for new IcePower Module vs original IcePower Module usage.
+
+----------------------------------------------------------------------------
+
+Release date 2025-08-21
+SA8DSP_Rev-02-61_WebUI-29
+
+
+
+Changes/Enhancements:
+> Increased main processor speed from 150MHz to 200MHz
+> Initial Release to support new 8-channel power supply, GPIO, Output Module and DC-DC hardware
+> Initial release with new LWIP network stack
+> New JSON memory stack
+> Updated Log messages
+> New Network Time and Local Time handling code
+> Added new Generic Flat FIR presets for time alignment with Gen2 speakers when using a custom Speaker Profile.
+> Added Telnet menu option to reboot to USB Mass Storage mode for manual firmware updates ("uf2mode"). Requires USB A-A cable and optional USB-C-A adaptor.
+
+
+
+Bug Fixes:
+> Support for SW-1DSP LED board
+> Add code to reconnect Ethernet link when cable is disconnected/reconnected. System will auto re-address to new DHCP server, or self IP 169.254.0.8, uness set to Static IP.
+
+
+----------------------------------------------------------------------------------
+Release 2025-08-01
+
+SA8DSP_Rev-02-57_WebUI-28
+
+
+Changes/Enhancements:
+> Speaker Definition list now displays legacy speakers for backward compatibility.
+> Added L100 (Gen2) and C150 (Gen2) speaker profiles with updatged FIR/IIR mixed phase filter corrections
+> Improved programming of ADC power on
+> Simplified Logging of power state
+> Added trigger power off wait time to avoid false trigger off (debounce) such as with Preamps that pulse the trigger on power on
+> Updated Failsafe files for firmware updates, auto redirect to Wizard page after reload
+> Improved Network settings read/write
+> Improved Amp Clipping behavior (clipping and output Limiter)
+> Improved turn on timing behavior for DSP programming at power on
+> Add a validity check on file-->SpeakerDefinition input from file system.
+> Webpage - Increased Text field charachter limits to match hardware limits
+> Webpage text overlfow in the matrix display allows for hover to see full names when length it too long to display
+> Added DAC mute control on power on
+
+
+Bug Fixes:
+> Webpage reload , removed reload POST, causes page to not reload
+> Webpage charachter limits now block too long text length whoch could cause the text not to be saved
+> Removed DSP input Mute GPIO, moved to DAC Mute control from software control
+
+
+
+
+----------------------------------------------------------------------------------
+Release 2025-04-09
+
+SA8DSP_Rev-02-56_WebUI-25
+
+
+Changes/Enhancements:
+> Watchdog Timer enabled to fix stuck state if DHCP Server is not available
+> Enhanced error logging during read/write of configuration file
+
+
+Bug Fixes:
+> none
+
+
+
+
+----------------------------------------------------------------------------------
+
+Release 2025-03-025
+
+SA8DSP_Rev-02-54_WebUI-24
+
+
+Changes/Enhancements:
+> LED turn on state better matches programming process
+> Watchdog Timer enabled to fix stuck stated
+> Backup Network Config file enabled to recover netwerk state on corupted file
+
+
+Bug Fixes:
+> Soft Start power supply monitoring turned on [8 channel only]
+> Increased DSP status checks to decrease false "stuck" state
+
+
+
+
+----------------------------------------------------------------------------------
+Release 2025-03-01
+
+SA8DSP_Rev-02-53_WebUI-23
+
+
+Changes/Enhancements:
+> HLS Speaker Profile added IN-Wall option
+
+
+Bug Fixes:
+> None 
+
+
+
+----------------------------------------------------------------------------------
+Release 2025-02-25
+
+SA8DSP_Rev-02-53_WebUI-22
+
+
+Changes/Enhancements:
+> Import/Export User EQ now exports all channel information, but imports only EQ and Traim settings.
+> Export Config now copies Network Hostname into file name automatically.
+> Added channel name to Speaker Test display list (text only).
+> Added driver mute/unmute on Speaker Testing page for control of Bi-amp and Tri-amp speakers from single page.
+> Improved power supply startup monitoring, during softstart the system will boot faster or slower depending on the power supply status.
+> Improved Power Supply Monitoring logic so that there both Power OK and Power Warning must trigger to be a valid power supply failure.
+> Added logging of the power on/off/reboot from WebUI and Telnet interface, in addition to Front Panel and Trigger input.
+> Added logging of the file system read, in case of file system error, for troubleshooting.
+> Network Reset (rear panel button) now reboots hardware to update network DHCP IP Address.
+
+
+Bug Fixes:
+> ICS3 with Sub1 profile corrected bass management frequency
+> 
+
+
+
+----------------------------------------------------------------------------------
+
+Release 2024-11-24
+
+SA8DSP_Rev-02-52_WebUI-21
+
+
+Changes/Enhancements:
+> Changed the Mute rate of input matrix mixer, to avoid noise when switching from inputs to internal test tone.
+> Added a Channel Export/Import, to allow channel EQ,Gain, Delay to be copied to other channels or amplifiers. File is saved with the channel name into the downloads folder.
+> Changed the Channel Gain to be active with each click of the mouse, instead of requiring an ENTER or other user click to make the new gain active.
+> added Firmware Failsafe webpage fall back. If the webpage data is lost there will still be a user reachable webpage to update from. The page is always at http://mDNSname.local/failsafe/index.html, for example: http://SA-8.local/failsafe/index.html or IP address like http://192.168.1.22/failsafe/index.html 
+> added front panel (SA8/IA8 only) LED blink during power supply error, 50% on / 50% off , to display with power supply overtemp or amp board disable errors, in addition to logging in the system log.
+> added an alert when updated firwmare is available for download
+> added an alert to backup the config before a firmware update
+> simplified the Insight Series speaker profiles
+> added a Dante Name refresh button (network page)
+> re-enabled the ability to import network settings on configuration import
+
+Bug Fixes:
+> Reduced DSP Code size for increased processing headroom, some units could exceed 100% and would not pass audio.
+> Fix a bug in background tasks that properly calls a task when it's time period has expired.
+> Removed RP2040 Watchdog timer to avoid possible hang on reboot
+> Removed unused EQ filters from Channels (not yet supported in released code)
+> Fixed Sub1 profile to be backward compatible , to avoid "waiting for data" message to be incorectly displayed
+
+
+
+----------------------------------------------------------------------------------
+Release 2024-10-10
+
+SA8DSP_Rev-02-51_WebUI-20
+
+
+Changes/Enhancements:
+> Added DSP Core health status check with auto reboot if DSP core stops responding. System will automatically reboot when DSP stops running for any reason. Checks are on 5 second interval.
+> Changes Telnet menu behavior to better work with external automation systems for power and status control.
+> Adds Telnet connection timeout of 10 minutes. Telnet port will auto disconnect and release the port if there is no activity for 10 minutes. This is for better use with external control systems.
+> Front Panel LED display bootup step during bootup instead of just blinking. Each LED represents a step in the process.
+> Added front panel LED blinking pattern if power supply shows high temp warning or early warning for power failure, but do not mute. ACDC will self protect if overtemp goes high, and amp modules will self protect individually.
+
+Bug Fixes:
+> Fixes an ESS ADC factory register setting that sets the polaity of the ADC inputs wrong.
+
+
+----------------------------------------------------------------------------------
+
+
+Release 2024-9-16
+
+SA8DSP_Rev-02-50_WebUI-20
+
+Changes/Enhancements:
+> Adds updates to the speaker profiles for: HLS; S57i; SRS; P2i; P4i; P6i; L8i. Insight in-wall models now feature FIR filter phase correction. Updates to ICS3/Sub1 profiles for use with and without each other as a Sub/Sat.
+> Increased User EQ from 10 bands to 12 bands and reduced IIR PEQ on Driver EQ for magnitude correction, since all speaker profiles use FIR filter for Phase and Magnitude (mixed phase filters). 
+	*Note: this only applies to newly created channels. Existing systems will need to delete and recreate the channel to see these 2 new filters.
+> New ESS ADC input filter settings for lower noise and distortion on analog inputs, with improved Impulse response.
+> New internal Speaker Polarity/Alignment pop Test using pulse tone for more consistent output and easier reading of results
+> Increased channel delay maximum from 30ms to 35ms across all channels
+> All subwoofer Speaker Profiles now have access to up to 8th order Low Pass to assist in creating a proper bass management slope, for preamps that only have 2nd order asymetrical (THX Legacy) slopes.
+> Adjusted internal test Pink Noise to be -20dbfs through the signal chain to align with Dolby and CEDIA spec for output SPL test levels, turn on default is -40dbfs
+> Significantly improved the speed of webpage load from the amplifier to the web browser.
+> Added 1st order all pass / hi low filter into DSP hardware for phase alignment during speaker setup (for use with Factory Calibration Services). This is not enabled in the WebUI at this time.
+> Added Output Limiter into driver signal chain to safely limit the input signal without overdriving the amp channels input (safety limiter). This cannot be seen by the end-user.
+> Allows for 2 concurrent WebUI sessions at a time. NOTE: If 2 users access the same page at the same time, the last person to make a change will overwrite the older session.
+> Changed power supply monitor so that audio will continue to play until the caps are discharged. If there is a power supply fault (Temperature or Hardware Failure), the system will log the event, blink the front panel, and attempt to allow the power supply to recover. Audio will no longer automatically mute.
+> Changed output clipping monitor to ignore any clip event that is less than 1000ms in length.
+
+Bug Fixes:
+> Fixed an error in the DHCP code, which may have caused an improper DHCP address
+> Added log entry for updating the system time from the internet (pool.ntp.org)
+> Fixed Point3-GT In-wall profile (Gen2 with FIR) to properly send all FIR filters when selected. Previously had only sent IIR filters. On-Wall profile was not impacted.
+> Eliminates the Dante Audio Input turn on POP, with an automatic and dynamic monitoring of the input signal to MUTE whenever signal Lock is lost. This replaces a turn on timer which could would update in real time if signal was lost.
+> Corrected Dante input polarity to match analog input polarity across all signal paths.
+> Added hardware controlled DSP Mute (GPIO) for future use with fast turn on standby mode.
+> Increased internal SPI Bus speed to maximum for Network Interface
+> Enabled the WebServer ping/pong mechanism to reset the network connection to dropped clients (Web UI Page on Web browser) after 30 seconds of no response from client.
+
+----------------------------------------------------------------------------------
+Released 2024-7-24
+WebUI Version rev19 - SA8DSP 2024-7-24. System Controller Firmware Version 08.02.49.
+SA8DSP_Rev-02-49_WebUI-18 
+
+Changes:
+> Added new HLS Speaker Profile for wider dispersion (lower SPL with wider dispersion)
+
+Bug Fixes:
+> none
+
+
+----------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------
+Released 2024-7-18
+WebUI Version rev18 - SA8DSP 2024-6-28. System Controller Firmware Version 08.02.49.
+SA8DSP_Rev-02-49_WebUI-18 
+
+Changes:
+> None
+
+Bug Fixes:
+> Fixes amber standby light to not illuminate with Dante Brooklyn3 card installed.
+> Defaults DANTE_ENA to LOW at startup.
+> Clickless Dante input enable set to 480,000 samples delay timer from power on
+
+
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Released 2024-6-28
+WebUI Version rev18 - SA8DSP 2024-6-28. System Controller Firmware Version 08.02.48.
+SA8DSP_Rev-02-48_WebUI-18 
+(Cumulative with WebUI-Rev17 / Firmware Rev47 not released)
+
+Changes:
+> Added display and Edit of installed Dante card. 
+> Added display of NTP information and timezone.
+> Added changeNTP() and changeTZ() offest, this allows the user to adjust the display of the time stamp in the log. This does NOT change the time, which is always stored in GMT.
+> Factory RESET will now reload using the IP Address (if using IP Address and not Hostname). This avoids reloading with the generic hostname if there are multiple units on the same network.
+> changed the ACDC Power Supply error monitoring (PowerFail & ACDC Overtemp); when either of these signals are HIGH, amp will MUTE all amp modules, and blink the front panel LED. 
+> changed how ACDC PowerFail or Power Supply Overtemp recovery works; When the fault clears from the ACDC, MUTE is released and normal operation continues. 
+> Added LED ON command for SA2 and SA3 (only used in testing at the Factory Assembly, not in field use)
+> added a log message write (MSG_CONFIG_RESET, 2, 0, 0); if the User configuration is reset from bad header read. This would only happen if the user configuration data was corrupted on the file system.
+> added a log message write (MSG_CONFIG_RESET, 1, 0, 0); when choice 2 is selected in Telnet. This would only happen if someone used the Telnet to reset the User configuration.
+> moved the Log event write for Webserver (Web UI) User Configuration Reset to before the reset to align with the Telnet server cfgreset.
+> Changed amp channel CLIP detection threshold to 1250 milliseconds to allow driving amp into clipping but stil protect the output from damage.
+
+
+
+
+
+Bug Fixes:
+> Fixes a network connectivity bug where the unit would appear to be unresponsive/crashed if the Network connection was lost while the network interface was on. 
+> When a WebUI ON or OFF command is received, added DSP_MuteAllChannelInputs to before the change in amp power state to avoid any clicks or pops on turn on.
+> WebUI validates Hostname inputs, and changes any unsupported characters to a "-". DNS Hostname rules do not allow special characters other than "-" and if used the webUI and Server would be out of sync and appear to be crashed or not loading properly.
+> Server code (backend) Break out of changeHostname() when bad character is detected. ALong with the above validation, improves hostname support
+
+
+
+
+
+
+----------------------------------------------------------------------------------
+
+Released 2024-4-1
+SA8DSP_Rev-02-46_WebUI-16
+
+Changes:
+> Added LS3 and LS4 "Gen 2" Speaker Profiles
+> Changed display names of Speaker Profiles to clearly identify "Gen 2" speaker profiles (updated for 2024)
+> Changed defaults to "Network Power Save" to be Off, to allow the network to communicate while the system is in Standby.
+> Moved the "Power On / Power Off" buttons on the Wizard.html page for easier use.
+> Server side Webserver Interface code: Added the new server_type to Javascript Configuration Object.
+> Client side Javascript Configuration Object code: Add interpretation of server_type to support common code between Gen 1 and Gen 2 network controller hardware
+> Changed power supply monitoring behavior to allow for amp to continue operatiing under heavy loads without shutting down.
+> Added System Options for User Reset (Channels and Speakers) or Factory Reset (all settings)
+
+
+Bug Fixes:
+> Fixed error in C225 Speaker Profile file name on server, which could block the profile from loading properly
+> Javascript code check for configuration loaded to slightly later and more specific places, simplified and delete unused code, to improve connection to remote clients.
+> Improve WebUI loading by optimizing Javascript client code (Move cfgLoaded = true to processCfg(). Increase check websocket timeout to 5 seconds.)
+> Server side Ethernet Manager: Fix problem where a call to netEmergencyClose() will not recover the network connection.
+> Server side Webserver INterface: Simplify/Optimize commented out code. Add missing default condition to switch.
+> Added DSP_MuteInputs when doing firmware or reboot, to avoiud any POP or noises during the process.
+
+
+
+----------------------------------------------------------------------------------
+Released 2024-2-20
+rev 45-15
+SA8DSP_Rev-02-45_WebUI-15
+
+Changes:
+> Added additional updated Speaker Profiles with FIR / IIR mixed filter Crossovers for Sage Series speakers.
+> Channels now have EQ frequency graph, which updates live as you enter data.
+> EQ Shelf Filters (Channels and Speakers) now have Q input to allow different slope shapes for the High and Low Pass Shelf EQ.
+> User entry fields now auto update to Auto Correct to allowed min and max, such as delay max/min, Filter Frequency max/min, Q max/min, Gain min/max; as the user types or enters the data
+> All User fields (text names, frequency, Gain) can now be entered by pressing the ENTER key in addition to clicking out of the field
+> Gain/Trim fields only update when pressing ENTER or leaving the field (lose focus). Before, this would send each keystroke as entered, which could send incomplete data.
+> Web Page name (displayed in the browser Tab at top of the page) now updates to match the hostname. If you have multiple pages open this makes it easier to navigate between amplifiers.
+> "Enable All" button on Speaker Testing is moved to be easier to use
+> System Pulldown has easier to read menu items
+> System Pulldown now has Power Reboot option
+> Index page (landing page) has power on/off for use from SmartPhones to control power
+> Log activity display now shows when someone has connected and logs the IP address
+> Test Tone will not reset if the Speaker Driver Outputs are changed. This allows to use the test tone to find the proper output where the physical connection may be mislabeled.
+> Shortened the wait time for Trigger Out to become active when daisy chaining power to shorten bootup time of large systems.
+> Web Page UI only allows one active user at a time. This blocks a potential for 2 users to change the same settings and overwrite each other.
+> When using an IP Scan such as "Advanced IP Scanner" or "AngryIP", the device name will appear as "WisdomAudio-D5xxxx" where the last digits are the MAC Address of the unit, listed on the rear panel label. THIS DEPENDS ON THE ROUTER…YOURS MIGHT NOT DO IT.
+> Network fields are READ ONLY when in DHCP and allow for use editing in MANUAL (static) IP mode.
+> LED front panel blink during bootup
+> The export and import config is completely re-written. On Export the network info is always saved, and on Import Config you can choose to include the Network info or not (including Hostname).
+> Import Config you now choose a file in one step and then click load. Software remembers your choice so you can easily re-import again if needed.
+> Firmware Update progress includes feedback on progress on the server side
+> Max Gain on Test Tone is 0dB (was +10) to avoid damaging speakers or clipping amplifier
+> RESET CONFIG now only deleted the Channels and Speakers, and does not delete Network or Audio System settings.
+
+Bug Fixes:
+> changed to new NTP and Ethernet source code for better handling of Network connect/disconnect and disables multiple open session that could overwrite settings.
+> I2C comms reset for internal control protocol where some internal devices may hang the bus and create a "non-responsive" system.
+> Fixed a bug in Chrome Browser where Importing a Config more than once with the same Filename would fail.
+> Fixes Power Supply log details to properly show Power OK and Overtemp conditions.
+> Allows use of User specified Name Servers when in Manual/Static IP setup mode.
+> Fixes a bug with REBOOT when Netowrk Power Save is OFF (always on), system would hang in the reboot state.
+
+
+
+----------------------------------------------------------------------------------
+SA8DSP_Rev-02-45_WebUI-14
+Not released - Internal Only
+
+----------------------------------------------------------------------------------
+
+Released 1/3/24
+SA8DSP_Rev-02-43_WebUI-13
+rev 43-13
+WebUI Version rev13 - SA8DSP RP2040 1-3-2023. System Controller Firmware Version 08.02.43.
+
+
+Changes: 
+> Default Hostname in IP Scan is set to WisdomAudio + last 6 digits of MAC Address
+> Improved Firemware update process to load all files in one step
+> Added REBOOT and OFF (Standby) command from WEB UI 
+> Added logging of when a web client (end user) connects to the ampllifier webserver
+> Log Message in UI is now sent only when there is new data, and no lnger on a timer from the client
+> IP Address will not be exported in Export Config if "Include Network" is ticked, and "DHCP" is ticked. DHCP will use local IP Address.
+> Added a REBOOT option to the Web UI, to reboot the hardware without resetting user settings.
+> Routing Matrix now shows RED color for unasigned Outputs and BLUE for assigned outputs
+> All Gains, Delays and Q inputs will automaticaly revert to the maximum allowed entry when a a number is entered that is too large
+> Mutes are not reset when changing the output of speakers. This allows changeing the output whuile playing a test tone to find the correct physical outputs.
+> Shorter wait times on the Trigger Out turn on.
+
+Bug Fixes:
+> Fixed hang on RESET CONFIG 
+> Fix FIR initialization (unity gain) functions, where unity would not be writtent properly
+> Fixes an internal communication bug (I2C) to recover from any errros without requireing a rebot of the hardware.
+> Removed sending Unity Gain data on FIR except when selecting a new Speaker or When System Reset is chosen.
+
+
+
+----------------------------------------------------------------------------------
+Released 12/7/2023
+SA8DSP_Rev-02-41_WebUI-12
+WebUI Version rev12 - SA8DSP RP2040 11-20-23. System Controller Firmware Version 08.02.41
+
+Changes:
+> Simplified file load from amplifier to Web UI client, reduces load time to under 1.5 seconds in most cases. ALso fixes the Safari bug below.
+
+Bug Fixes
+> Chromium on Mac (Safari) and Linux (Chromium) does load properly.
+> FIR Unity Data written when changing speakers from one with FIR DATA to one without
+
+
+----------------------------------------------------------------------------------
+Released 11/14/2023
+SA8DSP_Rev-02-39_WebUI-11
+WebUI Version rev11 - SA8DSP RP2040 11-14-2023. System Controller Firmware Version 08.02.39
+
+Change List:
+> Combined HTML Files for faster loading
+> Updated Subwoofer profiles for use with Multi-Sub Optimizer software
+> Increased maximum User EQ boost/cut gain to +/-15dB (from +/-12dB)
+> Increased the number of PEQ available to the Speaker Profile for subwoofers for use with Multi-Sub-Optimizer
+
+
+Bug Fixes:
+> fixes bug where ICI6, SCS, STS and S90 would not read properly from file system, and would load generic data
+> For speaker profile loading, added Speaker fallback to display "Failed To Load" if file system cannot read the data properly
+
+----------------------------------------------------------------------------------
+Released 10/12/2023
+SA3DSP_Rev-02-38_WebUI-10
+WebUI Version rev10 - SA3DSP RP2040 10-12-2023. System Controller Firmware Version 03.02.38.
+
+
+Change List:
+> Initial release to support new Network Cotroller Hardware
+> Supports Gen2 network hardware. Is not backward compatible with previous hardware.
+> FIR filters are enabled.
+> New speaker profiles to use FIR filters (Subwoofers, L75, Line-2-3-4, ICS7a)
+> Ability to Unlock Factory Filters is enabled now that bug fix "Editing Speaker Driver Crossover" is fixed
+> Speaker Variant selection resets when picking a new Speaker Type from the pulldown
+> Improved Speaker Driver graph to correctly calculate crossover slopes and not use generic 2nd order slope
+> Web UI reload default drivers on page reload if the output is not yet picked
+> General Speaker Profile cleanup.
+> Added Bypass option checkbox to Speaker Driver Crossover Filters.
+> Added FIR filter button (display only, you cannot edit FIR filters) to Advanced Speaker Driver controls, with Lock/Unlock control same as other Wisdom Drivers.
+> Delete Speaker and Delete Channel is only available on the last speaker or channel to avoid accidentally deleting the wrong speaker
+> Add Speaker button only available if the number of speakers is no more than the number of outputs.
+> Add Channel button only available if the number of channels is no more than the number of outputs.
+> Added limits and steps to the Q and Fc of the EQ in the Web UI to match the hardware DSP; 
+> Firmware Update from webpage only.
+> Add the log messages to report "ADC init failure" as well as "ADC initialize verify failed" and Report "DAC Init failure".
+> Power failure logic now disables the amplifier modules high voltage rails but does not shut down the low voltage to allow for the power supply to reset more quickly after a power failure.
+> Time zone of Log is now based on EST time zone and not GMT.
+> Re-ordered the EQ pulldown for more logical arrangement.
+> Cleaned up the column spacing on Speaker Output Pulldown.
+> Channel EQ Q and Gain will now display with proper rounding.
+> Firmware updates are only through the Webpage. USB based firmware update not supported at this time.
+> Channel EQ Gain and Q, and Channel delay will round off to the nearest .01. Gain will round to the nearest 0.5dB. Speaker EQ, gain and delay are not rounded and data will show to the nearest .00001 for maximum accuracy!
+
+Bug Fixes:
+> Editing Speaker Driver Crossovers is now allowed. All changes no longer reset to factory settings when opening the Web UI or reloading the web page while connected.
+> Fixed display bug when webpage reloads from webserver. Filters are now properly displayed
+> Fixed "Amp Not Responding" log report to show on power on in addition to during operation.
+> Web UI , on reboot force the Mutes/Solo/Test Signal displays (radio dialogue) to nothing selected, which matches the hardware state on reboot.
+> System Configuration files (.json) with Channel/Inputs/Speakers in different orders no longer cause failure in reboot that erases the settings
+
+
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+Below this line is Original Network / Controller Hardware
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+Released 10/11/2023
+SA8DSP_Rev37_WebUI-10
+WebUI Version DSP8-Rev10 10-11-2023. System Controller Firmware Version 08.01.37.
+
+
+Change List:
+
+> Modified Power Failure or Hard Switch while On behavior to allow for fast power down of power supply caps. SA8 will now mute all outputs but not turn off until main caps are drained.
+> Improved Test Tone "Click" track to take advantage of ESS AutoMute Feature Disabled from version 36 below.
+> Changed auto save feature to check every 1 second for changes and write to flash if they have.
+> WebUI Log Display updates every 30 seconds
+> Channel Delay display rounds to nearest .00 decimals
+> Speaker Crossover display updates to show LR and BW filters correctly and to correctly calculate crossover slopes and not use generic 2nd order slope (display bug only)
+> increased the Min/Max on the Speaker Drivers gain to +/- 15dB (was 12, still is 12dB on Channels).
+> Crossover Filter on Speaker Drivers lowered the frequency Fc min to 10hz to allow for "rumble filters"
+> Added Sub1 speaker profile option of "with ICS3" or "generic" to give more installation options; lowered the ICS3 Low pass to give slightly more bass extension.
+> General Speaker Profile cleanup
+> Added ICI6, P7m and P9m speaker models to Speaker Profile list
+
+Bug Fixes:
+> Corrected error code:  logMsg("Amp not responding");LogMessageEEP(MSG_AMP_NO_RESPONSE,) was incorrectly "Amp Clipping" message
+> WebUI will reset the Test Tones on reload to properly update the display to match the hardware state
+
+
+----------------------------------------------------------------------------------
+Released 8/31/2023
+SA8DSP_Rev36_WebUI-09
+WebUI Version DSP8-0.09 4-12-2023. System Controller Firmware Version 08.01.36
+
+Change List:
+>None
+
+Bug Fixes:
+> Fully disabled the ESS Sabre DAC "Automute".
+
+----------------------------------------------------------------------------------
+Released 8/30/2023
+SA8DSP_Rev35_WebUI-09
+WebUI Version DSP8-0.09 4-12-2023. System Controller Firmware Version 08.01.35
+
+Change List:
+>None
+
+Bug Fixes:
+> Changed the ESS Sabre DAC "Automute" to avoid muting on low level signal. Especially on low freqneyc content such as LF drivers and Subwoofers.
+> fixed bad time data in log when reading the Log for display
+> Reorder HTTP_FILE_TYPE for performance. Add HTTP_EOT, HTTP_TTF,  
+> Fix a bug with not found in loop resulting in HTTP_GZ instead of HTTP_UNKNOWN. Add a special handler to substitute the shorter base name 'glyphicons-halfl-reg' for 'glyphicons-halflings-regular'
+
+----------------------------------------------------------------------------------
+Released 4/15/2023
+SA8DSP_Rev34_WebUI-09
+WebUI Version DSP8-0.09 4-12-2023. System Controller Firmware Version 08.01.34
+
+Change List:
+>None
+
+Bug Fixes:
+>Corrects the turn on pop when combining both Analog and DANTE inputs on the same channel.
+
+----------------------------------------------------------------------------------
+Released 4/14/2023
+SA8DSP_Rev33_WebUI-09
+WebUI Version DSP8-0.09 4-12-2023. System Controller Firmware Version 08.01.33.
+
+
+Change List
+>Added DC blocking on all DSP outputs to eliminate DC offset from digital signal processing, which may damage the speakers or cause the amplifier to shut down at high levels.
+>Added the System-->Firmware Update option as an experimental feature. If using the Ethernet update fails, fall back to the USB update as shown in the instructions.
+
+Bug Fixes:
+>None
+
+----------------------------------------------------------------------------------
+Released 4/1/2023
+SA8DSP_Rev32_WebUI-08
+WebUI Version DSP8-0.08 3-31-2023. System Controller Firmware Version 08.01.32.
+
+Change List
+>Add Channel Button now shows at bottom of Channels list as well as top.
+>Channel information is not sent until the has a name or input source selected. This elimiates sending channel information over the netowork if nothing is defined yet.
+>Add Speaker Button only allows the maximum number of speakers to = the maximum number of amplifier channels. You cannot add more speakers than amplifier channels.
+
+Bug Fixes:
+>Changes behavior of Channel functions, only sending the channel being edited and not the entire channel list with each edit. This reduces the amount of data sent and increases stability of the system.
+
+----------------------------------------------------------------------------------
+Released 3/8/2023
+SA8DSP_Rev32_WebUI-07
+WebUI Version DSP8-0.07 3-7-2023. System Controller Firmware Version 08.01.32.
+
+Change List
+>User EQ on Channels shows correct fields based on EQ type and hide unused entry fields. Parametric shows Q, Gain and Frequency, High and Low Shelf show Gain and Frequency, High and Low Pass show Frequency.
+>Insight In-wall (P2i, P4i, P6i, L8i) have updated Speaker Profiles
+>Speaker Test Signal-->Polarity pulse "pop" is modified to work better with subwoofers. The pop is now louder than before and easier to hear on limited bandwidth speakers.
+>EQ and Driver Filters "Gain" and "Q" (for all EQ types) will send updated data as you change, or click the up/down arrow "live" so you can hear the changes in real time. If you hold the up/down arrow the data will be now wait until the control is released to send the updated data. This helps to reduce Network data traffic and improve UI responsiveness.
+>EQ and Driver Filters "Frequency" (for all EQ types) will send updates only after exiting the entry box field (lose focus). This is so that typing in the box does not send the wrong Frequency. You must exit the field to send the data.
+>Allows for Driver Outputs to be left undefined for speakers, especially bi-amp and tri-amp, without losing the output configuration. This allows for a speaker to have the output of only one driver routed the amp properly.
+
+Bug Fixes:
+>fixes a condition where the Analog to Digital Convertor clock reference could be out of sync with the DSP processor, causing static audio or low output. This would only impact analog inputs and not DANTE or internal noise test.
+>corrects the Channel EQ filter settings, to properly calculate the User EQ
+>If a speaker profile is selected but an output driver (amp channel output) is not selected, the display correctly updates.
+>Updated the Point3-GT speaker profile to fix a bug where the UI would hang on the speaker model and appear to be frozen.
+>Speakers-->Advanced now correctly calculates the high and low pass filter graphics for the display of the crossover.
+>The Web UI timer countdown logic for checking network connectivity is simplified, this is to avoid edge cases where the UI could get stuck in a loop and continuously reload when the network connection was OK and no reload was needed.
+
+
+
+----------------------------------------------------------------------------------
+
+Released 2/2/2023
+SA8DSP_Rev31_WebUI-0.5
+WebUI Version DSP8-0.05 1-31-2023-AM. System Controller Firmware Version 08.01.31.
+
+Change List:
+
+>Add an alert bar indicating that the configuration is not loaded yet.
+>Use long speaker names on speaker testing page instead of short names 
+>Reduce channel filter data when in bypass to speed up data transfer from WebPage to SA-8
+>Export Configuration now has option to include Network Data or only Audio settings for easier import on other networks and only update network information on the server when it is included in the import (allow for no network data in saved configuration).
+>Export Configuration ha simple "save" that automatically downloads the settings and does not require a right+click to save as
+>Import Configuration does not try to import network setup when DHCP is true and temporarily sets the system as offline while importing and reloading the configuration.
+>Auto-save every 10 seconds. 
+
+
+Bug Fixes:
+>Speakers-->Advanced Controls--> Speaker Driver EQ and filters are now shown on reload or refresh of the page.
+>Speakers--> Push Speaker Driver changes (advanced Speaker edit) on changes as they are made as "live changes"
+>Speaker Drivers Crossover now displays correctly on the graphing window (Advanced Controls)
+>Speaker Testing--> On refresh of page, the display of Test Tones will be reset to Normal Operation and all Mutes will be set to UNMUTED, to match the hardware state.
+>wizard.js: Add Keep Alive feature. Create function WS_send() that will validate the websocket reference validity before calling send(). Always set webSocketOpen to false.
+>index.html: Fix the preload syntax.
+>wizard.html: Preload the glyphicons fonts to prevent garbage characters on menu.
+>Switch to the latest version of svg 4 everybody and use svg4everybody.min.js.
+>Fix font preload warnings. 
+>Add Keep Alive offline detection."TCP Keep ALive"
+>Reduce the frequency of keep alive requests to 10 seconds. Always call keepAliveCheck() when calling keepAliveTimeout() - this keeps up the retry. 
+>Fix the way variants are set after the cfg is retrieved. 
+>Wait until the end of processCfg() to start log reads and keep alive checks. 
+>Increase the buffer size for memory when large speaker profiles (such as 3 -way speakers) are selected. Previously some data may have been lost.
+>Improve TCP retry/retransmission for file transfer from server (amp) to client (browser)
+>turn off power to UART for Dante Card to allow for Brooklyn3 update from Brooklyn2.
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+Not publicly released yet (12/15/2022)
+SA8DSP_Rev29_WebUI-04b
+YOU MUST SAVE ALL USER SETTINGS BEFORE INTSTALLING THIS UPDATE. USER SETTINGS WILL BE DELETED DURING UPDATE.
+
+WebUI Version DSP8-0.04b. System Controller Firmware Version 08.01.29
+Change List:
+
+>Reduced http sockets to 10 max (limit of hardware)
+>changed mute off rate (slew rate) for a smoother unmute from speakers
+>back end features to support FIR filter for speaker profiles (memory allocation, FIR read/write,)
+
+Bug Fixes:
+>websocket receivedString variable correct usage
+
+
+
+----------------------------------------------------------------------------------
+Released 12/2/2022
+SA8DSP_Rev28_WebUI-04a
+YOU MUST UPDATE FROM USB FOR THIS UPDATE FROM EARLIER VERSIONS!!! WEB UI UPDATE WILL FAIL.
+
+WebUI Version DSP8-0.04a. System Controller Firmware Version 08.00.28
+
+Change List:
+>changed revison numbering for easier identification [channels supported].[major revision].[patch]
+>changed Web UI Log update to every 30 seconds, sending last 20 entries. If there is a Web UI change in config this will also send the Save config every 30 seconds
+>removed the auto-save every 1 second (not needed as we now use the above method)
+>removed Audio Tab button from Index, it has no function
+>Reduced Channel and Speaker configuration data sent from web browser while editing to speed up responsiveness
+
+
+Bug Fixes:
+>TCPIP retransmision fix (the web UI bug)
+>Changed stadard port to 443 in WebUI
+>Turned off IP Checksum in TCPIP Server to avoid trap error crash
+
+
+----------------------------------------------------------------------------------
+SA8DSP_WebUI.03k-AppRev.08.27_SC-package.zip
+Released 10/4/2022
+WebUI Version DSP8-0.03k. System Controller Firmware Version 00.08.27.
+
+Change List:
+>Changed Firmware revision display name and file name to make versioning clearer
+>Significant improvement in Webpage loading by adding support for TCP Keep-alives and TCP Retransmissions of http data.  
+
+Bug Fixes:
+>Fix bug with incrementing of TCP/IP awaiting_ack to imporove TCP/IP WebUI load times (was incorrectly flipping the ack wait bit).
+>Improve connection reties with Chromium based browsers (Chrome/Safari/Edge)
+
+
+----------------------------------------------------------------------------------
+SA8DSP_rev26_03k_9-26
+Released 9/26/2022
+WebUI Version DSP8-0.03k, 2022-9-7. System Controller Firmware Version 00.08.26.
+
+Change List:
+>Increase Amp Module Clipping Detection level +6dB to allow louder SPL levels
+
+Bug Fixes:
+>Makes auto-save common between all models, SA-8/SA8DSP/SA-3DSP/SA-2DSP 
+
+----------------------------------------------------------------------------------
+
+SA8DSP_rev25_03k_9-23
+Released 9/23/2022
+WebUI Version DSP8-0.03k, 2022-9-7. System Controller Firmware Version 00.08.25.
+
+Change List:
+>Increase auto-save to once per second
+
+Bug Fixes:
+>None
+
+----------------------------------------------------------------------------------
+
+SA8DSP_rev24_03k_9-19
+Released 9/19/2022
+WebUI Version DSP8-0.03k, 2022-9-7. System Controller Firmware Version 00.08.24.
+
+Change List:
+>Mute all outputs on bootup before user settings are loaded to ensure no unexpected audio routing
+
+Bug Fixes:
+> Corrects a condition where a system could reset to factory defaults all user settings after a firmware update or brown-out power condition
+
+----------------------------------------------------------------------------------
+
+SA8DSP_FW-9-7-2022-rev-K-08.22
+Released 9/13/2022
+WebUI Version DSP8-0.03k, 2022-9-7. System Controller Firmware Version 00.08.22.
+
+Change List:
+> Default Input names now match physical inputs (Analog 1-8 and Dante 1-8)
+> Dante input numbers now match Dante Controller 
+***Check Dante Controller for Dante Firmware Update***
+> Changed bootup and shutdown sequence to reduce turn on/off pop
+
+Bug Fixes:
+> Corrected Dante signal routing, pairs were reversed (1+2 reveresed with 3+4)
+
+
+
+-----------------------------------------------------------------------------------
+
+SA8DSP_FW-9-4-2022-rev-i-08.20
+Released 9/4/2022
+WebUI Version DSP8-0.03i, 2022-9-7. System Controller Firmware Version 00.08.20.
+
+Change List:
+> none
+
+Bug Fixes:
+> Improved Web UI load on Chrome and Safari (web page cannot load error)
+
+
+
+-----------------------------------------------------------------------------------
+
+SA8DSP_FW_8-29-2022-rev08.17
+
+Initial Release
