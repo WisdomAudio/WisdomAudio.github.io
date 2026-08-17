@@ -3,6 +3,14 @@ Version info page is https://wisdomaudio.github.io/ampversion.json
 
 Github repository: https://github.com/WisdomAudio/WisdomAudio.github.io
 
+Files to be updated:
+1. ampversion.json
+2. DSP_Amp_Firmware.zip
+3. DSP-Amp_Revision_Release_History.txt
+4. index.html
+
+
+
 
 1.
 In Wizard.HTML, change the date (data) for WizardVersion :
@@ -23,3 +31,9 @@ https://wisdomaudio.github.io/ampversion.json
 update index.html on https://github.com/WisdomAudio/WisdomAudio.github.io to reflect the last updatedc date.
 view it at:
 https://wisdomaudio.github.io/
+
+4. Rename the zip to be downloaded to be "DSP_Amp_Firmware.zip" and put it in Git\WisdomAudio.github.io, replace the old file of the same name from https://github.com/WisdomAudio/WisdomAudio.github.io/DSP_Amp_Firmware.zip
+
+5. update the history file DSP-Amp_Revision_Release_History.txt with the latest changes.
+
+6. commit and push all updated files.
