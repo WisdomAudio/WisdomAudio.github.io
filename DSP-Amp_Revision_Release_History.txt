@@ -21,22 +21,26 @@ Release date 2026-08-xx
 SA8DSP_Rev-xx-xx-74_WebUI-41
 
 Changes/Enhancements:
-> PRESETS are now active. Up to 4 stored snapshots can be stored, plus the "baseline" config can be toggled.
-> PRESETS store all current Channels and Speakers settings. PRESETS do not store or recall any other data.
+> NEW FEATURE: PRESETS are now active. Up to 4 stored snapshots can be stored, plus the "baseline" config can be toggled. PRESETS store all current Channels and Speakers settings. PRESETS do not store or recall any other data.
+> NEW FEATURE: DSP Automute - will mute the output of the DSP if the signal drops below -100db. Can be used to reduce sources that may be noisy when not playing audio without turning off the amp.
 > Live Updates are pushed to all attached clients. This means that if multiple users are active, that all data is shared across open windows, avoiding stale displayed data.
 > DANTE now shows installed Dante hardware IP status. 
 > DANTE network settings can be reset to DHCP from WebUI, if set to STATIC IP.
 > Added P3m Profile
+> Updated ICS3FR to include phase correction to improve timbre match with other Sage Series products.
 > Removed Legacy non-FIR speaker profiles
 > WebUI shows File expansion during firmware updates of WebUI files
 > If Presets are updated, all open HTML Clients (web pages) are updated at the same time.
 > Firmware Alert is now smarter, checking against release dates and showing links to specific download files.
+> Upped MCU Library to version 6.0.0 from 4.7.1
 
 
 Bug Fixes:
 > WebUI no longer sends all channels when adding or removing an input for a specific channel. Only the specific channel data is sent.
 > Suppress writing of Configuration Data to the file system during import until complete. This significantly speeds up the import process as all changes are "saved to disk" as a bulk save, instead of each individual change.
 > Import Network Setup from configuration json now works properly; previously the Network import would force a reload before the rest of the configuration was loaded.
+> Fixed slow network control when in standby with Network Power Save Off, when talking to DSP. Related to DANTE information when powered off (Standby).
+
 
 ----------------------------------------------------------------------------------
 Release date 2026-07-24
