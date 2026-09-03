@@ -1,18 +1,25 @@
 
-SA-xDSP - (includes all models) Revision History-->
+DSP Amplifier - (includes all models) Revision History--> 
+SA8DSP/SA3DSP/SA2DSP/IA8SP/SW1DSP
 SA8 is noted here but this covers all models, where features are appropriate. Not all models have all features.
 ----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
 
 Known Bugs (new gen hardware specific):
 > Some systems come up too fast and the Router will assign a new IP address after reload, as the old one is still being held in use.
-> Firmware Update from firmware prior to Rev-xx-xx-46_WebUI-16, or from any previous version to Rev xx-xx-72 or higher, loads but does not reboot correctly sometimes. Requires a Manual Power off from the rear panel to complete normally.
+> Firmware Update from firmware prior to Rev-xx-xx-46_WebUI-16, or from any previous version to Rev xx-xx-72 or higher, loads but does not auto reboot correctly. If system does not auto reboot after firmware upgrade (1 minute wait time) it will require a Manual Power off from the rear panel to complete normally. This will not cause any problems on the firmware upgrade, only the firs time reboot.
 > In the Speakers-->Advanced Controls-->Crossover: Changing the Crossover Order or Type does not recalculate the available PEQ for the channel. It is possible to have PEQ in the speaker preset that is not active as the maximum DSP has been exceeded. This is a very advanced feature so be careful!
-> When test tone is on and the amp is placed in standby, if the network power save is OFF then on power on the webpage does not update to reflect the reset test tones and enabled speakers. Page must be manually reloaded.
+> When test tone is on and the amp is placed in standby, if the network power save is OFF; on power on the webpage does not update to reflect the reset test tones and enabled speakers. Page must be manually reloaded.
 
-Coming Soon:
+Roadmap Features:
 > Add ping/pong from webpage (client) to close if amplifier (server) is powered off or not responding within a short time, instead of waiting for Router to update open hosts or become stale.
-> Adding auto-mute and auto-standby options for power mode
+> Adding low power standby and auto-low power standby options for power mode, to allow muting or disabling only the output modules while leaving all processing on for fast turn on (less than 1sec).
+> Signal Sense option for auto standby of amp modules when no audio is playing after 5 minutes.
+> Temperature sensor reporting.
+> Download Event Log from WebUI into text file.
+> Add 1st order All Pass Filter
+> Add 2nd order All Pass Filter
+> Add MCU hard fault recovery (brown-out or similar) for system auto recovery
 
 ----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
@@ -22,9 +29,8 @@ SA8DSP_Rev-xx-xx-74_WebUI-41
 
 Changes/Enhancements:
 > NEW FEATURE: PRESETS are now active. Up to 4 stored snapshots can be stored, plus the "baseline" config can be toggled. PRESETS store all current Channels and Speakers settings. PRESETS do not store or recall any other data.
-> NEW FEATURE: DSP Automute - will mute the output of the DSP if the signal drops below -100db. Can be used to reduce sources that may be noisy when not playing audio without turning off the amp.
 > Live Updates are pushed to all attached clients. This means that if multiple users are active, that all data is shared across open windows, avoiding stale displayed data.
-> If Presets are updated or recalled, all open HTML Clients (web pages) are updated at the same time.
+> When Presets are updated or recalled, all open HTML Clients (web pages) are updated at the same time.
 > DANTE now shows installed Dante hardware IP status. 
 > DANTE network settings can be reset to DHCP from WebUI, if set to STATIC IP.
 > Added P3m Profile
@@ -33,16 +39,24 @@ Changes/Enhancements:
 > WebUI shows File expansion during firmware updates of WebUI files
 > Firmware Alert is now smarter, checking against release dates and showing links to specific download files.
 > Upped MCU Library to version 6.0.0 from 4.7.1
+> Fixed various button alignment and formatting for easier readability, including shading, highlighting and alignment.
+> Removed the "subwoofer" checkbox from the UI. It is not used and no longer needed. 
+> Added tooltips and helper text to Wizard UI.
+> Added physical input labels for INPUTS tab in addition to the user entered text field name.
+> Removed FIR data from loading into WebUI (client). Amplifier (server) loads data internally removing the need to pass the data, reducing network traffic. Also reduces exported.json file size.
+> Re-organized the Speaker Profile list for easier navigation.
 
 
 Bug Fixes:
-> WebUI no longer sends all channels when adding or removing an input for a specific channel. Only the specific channel data is sent.
-> WebUI no longer sense channel data when clicking the + for inputs(s), only when the input is selected.
-> Suppress writing of Configuration Data to the file system during import until complete. This significantly speeds up the import process as all changes are "saved to disk" as a bulk save, instead of each individual change.
-> Fixes a bug where inmported configuration data could be partially missed on import, using the same Suppress writing of Configuration Data to the file system during import fix as above.
+> Updated all DSP delay calculations to store and display 3 digits of accuracy (0.123)ms, where before it was 2 digits (0.12)ms.
+> WebUI no longer transmits all channels over network when adding or removing an input for a specific channel. Only the specific channel data is sent.
+> WebUI no longer transmits channel data over network when clicking the + for inputs(s), only when the input is selected.
+> Suppress writing of DSP Configuration Data to the file system during import until complete. This significantly speeds up the import process as all changes are "saved to disk" as a bulk save, instead of each individual change.
+> Fixes a bug where imported configuration data could be partially missed on import, using the same Suppress writing of Configuration Data to the file system during import fix as above.
 > Import Network Setup from configuration json now works properly; previously the Network import would force a reload before the rest of the configuration was loaded.
 > Fixed slow network control when in standby with Network Power Save Off, when talking to DSP. Related to DANTE information when powered off (Standby). System no longer tries to connect over the DANTE serial port when in standby.
-
+> SA8/IA8 with IcePower 400A2 modules only - Delays Log writing of Amp Channel protect until protect is active for more than 1 second this avoids false "protect on" being written to log, it does not block protection of module.
+> Fixes a bug where Mains Power and Network Power Save options would not be imported with a configuration.
 
 ----------------------------------------------------------------------------------
 Release date 2026-07-24
