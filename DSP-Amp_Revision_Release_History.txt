@@ -24,8 +24,8 @@ Roadmap Features:
 ----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
-Release date 2026-08-xx
-SA8DSP_Rev-xx-xx-74_WebUI-41
+Release date 2026-09-03
+DSP_Rev-xx-xx-74_WebUI-41
 
 Changes/Enhancements:
 > NEW FEATURE: PRESETS are now active. Up to 4 stored snapshots can be stored, plus the "baseline" config can be toggled. PRESETS store all current Channels and Speakers settings. PRESETS do not store or recall any other data.
@@ -45,6 +45,7 @@ Changes/Enhancements:
 > Added physical input labels for INPUTS tab in addition to the user entered text field name.
 > Removed FIR data from loading into WebUI (client). Amplifier (server) loads data internally removing the need to pass the data, reducing network traffic. Also reduces exported.json file size.
 > Re-organized the Speaker Profile list for easier navigation.
+> Power Icon on Web Page is now a toggle that emulates the front panel button. Power ON and OFF buttons are discrete commands.
 
 
 Bug Fixes:
@@ -57,6 +58,7 @@ Bug Fixes:
 > Fixed slow network control when in standby with Network Power Save Off, when talking to DSP. Related to DANTE information when powered off (Standby). System no longer tries to connect over the DANTE serial port when in standby.
 > SA8/IA8 with IcePower 400A2 modules only - Delays Log writing of Amp Channel protect until protect is active for more than 1 second this avoids false "protect on" being written to log, it does not block protection of module.
 > Fixes a bug where Mains Power and Network Power Save options would not be imported with a configuration.
+> back-end cleanup of FIleSystem Disc Drive mounting on initial bootup, adds Log nfo for any failue to mount and read the drive volume.
 
 ----------------------------------------------------------------------------------
 Release date 2026-07-24
